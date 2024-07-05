@@ -5,17 +5,16 @@ from libs.OpenAI.main import (
     infer_data_from_job_description,
     get_additional_options_from_job_description,
 )
-from libs.Supabase.software import search_softwares
+from libs.Supabase.candidate import search_candidates
 from schemas.job_description import (
     TRADE_OF_SERVICE_ENUM,
     YEARS_OF_EXPERIENCE_ENUM,
     ENGLISH_LEVEL_ENUM,
 )
+from utils.parse_job_description import parse_inferred_data_from_job_description
 
 st.title("Job Description Chatbot")
 
-# softwares = search_softwares()
-# st.json(softwares)
 
 if openai_api_key:
     search = "I am looking for a Sr. frontend developer with over three years of experience in Next.js, TypeScript, Azure, and AI."
@@ -27,6 +26,7 @@ if openai_api_key:
         if prompt:
             with st.spinner("Generating..."):
                 inferred_data = infer_data_from_job_description(prompt)
+
                 desired_roles = "', '".join(map(str, inferred_data["desired_roles"]))
                 years_of_experience = "', '".join(
                     map(str, inferred_data["years_of_experience"])
@@ -38,7 +38,9 @@ if openai_api_key:
                     job_desc_prompt
                 )
 
-                st.session_state.inferred_data = inferred_data
+                st.session_state.inferred_data = (
+                    parse_inferred_data_from_job_description(inferred_data)
+                )
                 st.session_state.additional_options = additional_options
 
         else:
@@ -48,8 +50,6 @@ else:
 
 
 if "inferred_data" and "additional_options" in st.session_state:
-    st.session_state.loading = False
-
     trade_of_services = st.session_state.inferred_data.get("trade_of_service", [])
     years_of_experience = st.session_state.inferred_data.get("years_of_experience", [])
     english_level = st.session_state.inferred_data.get("english_level", [])
@@ -89,3 +89,13 @@ if "inferred_data" and "additional_options" in st.session_state:
         inferred_and_additional_technologies,
         technologies,
     )
+
+    if st.button("Search"):
+        with st.spinner("Searching..."):
+            candidates = search_candidates(
+                selected_trade_of_services,
+                selected_years_of_experience,
+                selected_english_levels,
+            )
+
+            st.write(candidates)

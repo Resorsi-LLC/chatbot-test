@@ -42,13 +42,26 @@ job_description_schema = {
             "description": "The technologies or tools the candidate should be proficient in.",
         },
         "years_of_experience": {
-            "type": "array",
-            "items": {
-                "type": "string",
-                "enum": YEARS_OF_EXPERIENCE_ENUM,
-                "description": "The range of years of experience the candidate should have. If, for example, the candidate has more than 4 years of experience, all the values ​​that apply would be ['3-6 Years','6-9 Years','9+ Years']",
+            "type": "object",
+            "properties": {
+                "min": {
+                    "oneOf": [
+                        {"type": "number"},
+                        {"type": "string", "enum": ["Not Specified"]},
+                    ],
+                    "default": "Not Specified",
+                    "description": "The minimum number of years of experience",
+                },
+                "max": {
+                    "oneOf": [
+                        {"type": "number"},
+                        {"type": "string", "enum": ["Not Specified"]},
+                    ],
+                    "default": "Not Specified",
+                    "description": "The maximum number of years of experience",
+                },
             },
-            "maxItems": 4,
+            "required": ["min", "max"],
         },
         "english_level": {
             "type": "array",
@@ -76,15 +89,15 @@ job_description_additional_options_schema = {
         "desired_roles": {
             "type": "array",
             "items": {"type": "string"},
-            "minItems": 15,
-            "maxItems": 20,
+            "minItems": 12,
+            "maxItems": 30,
             "description": "Additional recommended roles or job titles for the candidate.",
         },
         "technologies": {
             "type": "array",
             "items": {"type": "string"},
             "minItems": 25,
-            "maxItems": 30,
+            "maxItems": 50,
             "description": "Additional recommended technologies or tools for the candidate.",
         },
     },

@@ -14,17 +14,19 @@ def get_softwares():
     return softwares
 
 
-def search_softwares():
+def search_softwares(software_names):
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+    softwares = []
 
-    response = (
-        supabase.table("software")
-        .select("name")
-        .order("name", desc=False)
-        .text_search("name", "HTML")
-        .execute()
-    )
+    for name in software_names:
+        response = (
+            supabase.table("software")
+            .select("name")
+            .order("name", desc=False)
+            .text_search("name", name, options={"type": "websearch"})
+            .execute()
+        )
 
-    softwares = [item["name"] for item in response.data]
+        softwares.extend([item["name"] for item in response.data])
 
-    return softwares
+    return list(set(softwares))  # Remove duplicates
