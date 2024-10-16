@@ -1,13 +1,5 @@
 from schemas.job_description import YEARS_OF_EXPERIENCE_ENUM
 
-YEARS_OF_EXPERIENCE_ENUM = [
-    "Not Specified",
-    "0-3 Years",
-    "3-6 Years",
-    "6-9 Years",
-    "9+ Years",
-]
-
 
 def parse_years_of_experience(years_of_experience):
     min_years = years_of_experience.get("min")
@@ -57,8 +49,19 @@ def parse_years_of_experience(years_of_experience):
     return list(result)
 
 
+def parse_english_level(english_level):
+    if "Not Specified" in english_level:
+        english_level.remove("Not Specified")
+    return english_level
+
+
 def parse_inferred_data_from_job_description(job_description):
     copy = job_description.copy()
+
     years_of_experience = copy.get("years_of_experience", {})
     copy["years_of_experience"] = parse_years_of_experience(years_of_experience)
+
+    english_level = copy.get("english_level", [])
+    copy["english_level"] = parse_english_level(english_level)
+
     return copy

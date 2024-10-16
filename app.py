@@ -24,7 +24,7 @@ if openai_api_key:
 
     if st.button("Generate"):
         if prompt:
-            with st.spinner("Generating..."):
+            with st.spinner("Inferring Data..."):
                 inferred_data = infer_data_from_job_description(prompt)
 
                 desired_roles = "', '".join(map(str, inferred_data["desired_roles"]))
@@ -74,9 +74,10 @@ if "inferred_data" and "additional_options" in st.session_state:
         years_of_experience,
     )
     selected_english_levels = st.multiselect(
-        "What English level should the candidate have?",
+        "What Minimum English level should the candidate have?",
         ENGLISH_LEVEL_ENUM,
         english_level,
+        max_selections=1,
     )
 
     selected_desired_roles = st.multiselect(
