@@ -111,18 +111,37 @@ if "inferred_data" and "additional_options" in st.session_state:
 
     if st.button("Search"):
         with st.spinner("Searching..."):
-            candidates_data = search_candidates(
-                selected_trade_of_services,
-                selected_years_of_experience,
-                selected_english_levels,
-            )
+            all_candidates = []
+            page = 1
+            page_size = 100
+
+            while True:
+                response = search_candidates(
+                    selected_trade_of_services,
+                    selected_years_of_experience,
+                    selected_english_levels,
+                    page=page,
+                    page_size=page_size,
+                )
+
+                all_candidates.extend(response["candidates"])
+
+                total_count = response["total_count"]
+                if len(all_candidates) >= total_count:
+                    break
+
+                page += 1
 
             document_ids = []
 
-            for candidate in candidates_data["candidates"]:
+            for candidate in all_candidates:
                 documents = candidate["resume"]["document"]
                 for document in documents:
-                    document_ids.append(str(document["id"]))
+                    document_ids.append(int(document["id"]))
+
+            st.write(
+                f"OpenAI will analyze {len(document_ids)} document embeddings from {total_count} candidates..."
+            )
 
             retrieved_candidate_documents = retrieve_candidate_documents(
                 prompt=prompt, document_ids=document_ids, max_docs=limit
@@ -136,5 +155,7 @@ if "inferred_data" and "additional_options" in st.session_state:
             )
 
             candidates = get_candidates(candidate_ids)
+
+            st.write({"candidate_ids": [cand["id"] for cand in all_candidates]})
 
             create_candidate_card(candidates["candidates"])

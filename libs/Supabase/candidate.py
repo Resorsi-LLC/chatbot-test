@@ -8,7 +8,7 @@ def get_candidates(candidate_ids):
     response = (
         supabase.from_("candidate")
         .select(
-            "zoho_id, candidate_number, first_name, last_name, location, trade_of_service, years_of_experience, english_level, resume(link, document(id, content))",
+            "id, zoho_id, candidate_number, first_name, last_name, location, trade_of_service, years_of_experience, english_level, resume(document(id, content), resume_personal_info(current_role(name)))",
             count="exact",
         )
         .in_("id", candidate_ids)
@@ -36,7 +36,7 @@ def search_candidates(
     response = (
         supabase.from_("candidate")
         .select(
-            "candidate_number, first_name, last_name, resume(document(id))",
+            "id, candidate_number, first_name, last_name, resume(document(id))",
             count="exact",
         )
         .range(start, end)
