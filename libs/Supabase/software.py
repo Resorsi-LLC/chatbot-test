@@ -1,9 +1,9 @@
-from supabase import create_client, Client
-from config import SUPABASE_URL, SUPABASE_KEY
+from libs.Supabase.auth import create_supabase_client
+
+supabase = create_supabase_client()
 
 
 def get_softwares():
-    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
     response = (
         supabase.table("software").select("name").order("name", desc=False).execute()
@@ -15,7 +15,6 @@ def get_softwares():
 
 
 def search_softwares(software_names):
-    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
     softwares = []
 
     for name in software_names:

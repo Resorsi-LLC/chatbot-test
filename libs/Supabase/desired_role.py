@@ -1,10 +1,9 @@
-from supabase import create_client, Client
-from config import SUPABASE_URL, SUPABASE_KEY
+from libs.Supabase.auth import create_supabase_client
+
+supabase = create_supabase_client()
 
 
 def get_roles():
-    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-
     response = (
         supabase.table("current_role")
         .select("name")
