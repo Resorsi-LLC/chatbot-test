@@ -20,7 +20,7 @@
 2. Instala las dependencias requeridas:
 
    ```bash
-   pip install -r requirements.txt
+   sudo pip3 install -r requirements.txt
    ```
 
 ## Configuracion
